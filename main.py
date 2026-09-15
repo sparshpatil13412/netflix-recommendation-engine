@@ -255,7 +255,7 @@ After the methods were applied it was concluded:
     2. When n_clusters was taken as 4, the dataset was divided into four clusters with each cluster having a unique genre distribution and the PCA visualization also showed that the clusters were well separated and detailed while still being distinct. This was a good choice as it provided new insights into the dataset.
     3. When n_clusters was taken as 10, the dataset was divided into ten clusters providuing fine details about the dataset revealing new patterns. But PCA visualization showed that the cluster were not distinct and there was a lot of overlap between the clusters.
 
-After analyziing the results of the three methods it was concluded that the best choice for n_clusters was 4 due to its detailing and fine separation of the clusters wihtout any overlap. 
+After analyzing the results of the three methods it was concluded that the best choice for n_clusters was 4 due to its detailing and fine separation of the clusters wihtout any overlap. 
 """
 
 #using k means with n_clusters = 4 to create the final model
@@ -268,17 +268,25 @@ print("Final dataframe after clustering:", df.head(10))
 print("Final dataframe with cluster names:\n", df['cluster'].head(10))
 
 ##USING K-MEANS TO DIFFERENTIATE THE FOUR CLUSTERS INTO SUB-CLUSTERS FOR FINER DETAILING
+"""
+Making dataframes of the four clusters got from K-Means.
+The following four clusters will be separated into sub-clusters for finer detailing and better recommendations.
+"""
 df_c0 = scaled_df[scaled_df['cluster']==0]#creating dataframe with titles in cluster 0
 print("Titles in cluster 1:",df_c0.head(2))
+df_c0 = df_c0.drop(columns=['cluster'])
 
 df_c1 = scaled_df[scaled_df['cluster']==1]#creating dataframe with titles in cluster 1
 print("Titles in cluster 2:",df_c1.head(2))
+df_c1 = df_c1.drop(columns=['cluster'])
 
 df_c2 = scaled_df[scaled_df['cluster']==2]#creating dataframe with titles in cluster 2
 print("Titles in cluster 3:",df_c2.head(2))
+df_c2 = df_c2.drop(columns=['cluster'])
 
 df_c3 = scaled_df[scaled_df['cluster']==3]#creating dataframe with titles in cluster 3
 print("Titles in cluster 4:",df_c3.head(2))
+df_c3 = df_c3.drop(columns=['cluster'])
 
 """
 Using the cluster dataframes, sub-clusters can be made.
@@ -300,7 +308,7 @@ def optimum_clusters(df, df_name):
             n_init=10
         )
         kmeans.fit(df)
-        elbow_scores.append(kmeans.inertia_)
+        elbow_scores.append([n_clusters, kmeans.inertia_])
         silhouette = silhouette_score(df, kmeans.labels_)
         davies_bouldin = davies_bouldin_score(df, kmeans.labels_)
         calinski_harabasz = calinski_harabasz_score(df, kmeans.labels_)
@@ -311,31 +319,53 @@ def optimum_clusters(df, df_name):
 
     #checking the results dataframe to see if the silhouette score is winning in only terms of the mathematical differnece
     results_df = pd.DataFrame(results, columns=['n_clusters', 'silhouette_score', 'davies_bouldin_score', 'calinski_harabasz_score'])
-    print(f"Results DataFrame of {df_name}:\n", results_df.sort_values('silhouette_score', ascending=False).head(2))#finding the top 10 silhouette scores to find the optimal number of clusters
+    print(f"Results DataFrame of {df_name}:\n", results_df.sort_values('silhouette_score', ascending=False).head(5))#finding the top 5 silhouette scores to find the optimal number of clusters
+    elbow_scores_df = pd.DataFrame(elbow_scores, columns=['n_clusters', 'inertia'])
+    print(f"Interias of the the sub-clusters of the cluster {df_name}:\n", elbow_scores_df.head(20))
 
     #plotting the elbow method graph to find the optimal number of clusters
     plt.figure(figsize=(14, 7))
-    plt.plot(range_n_clusters, elbow_scores, marker='o')
+    plt.plot(elbow_scores_df['n_clusters'], elbow_scores_df['inertia'], marker='o')
     plt.title('Elbow Method For Optimal k')
     plt.xlabel('Number of clusters')
     plt.ylabel('Inertia')
     plt.show()
 
-    return results_df
+    return results_df, elbow_scores_df
 
-results_c0 = optimum_clusters(
-    df_c0.drop(columns=['cluster']),
+results_c0, elbow_scores_c0 = optimum_clusters(
+    df_c0,
     "df_c0"
     )
-results_c1 = optimum_clusters(
-    df_c1.drop(columns=['cluster']),
+results_c1, elbow_scores_c1 = optimum_clusters(
+    df_c1,
     "df_c1"
     )
-results_c2 = optimum_clusters(
-    df_c2.drop(columns=['cluster']),
+results_c2, elbow_scores_c2 = optimum_clusters(
+    df_c2,
     "df_c2"
     )
-results_c3 = optimum_clusters(
-    df_c3.drop(columns=['cluster']),
+results_c3, elbow_scores_c3 = optimum_clusters(
+    df_c3,
     "df_c3"
     )
+
+"""
+After viewing the silhouette scores, interias, davies-bouldin score and calinski-harabasz score, the optimum number of clusters are chosen:
+    1.df_c0:2
+    2.df_c1:2
+    3.df_c2:19
+    4.df_c3:19
+"""
+
+def clustering(df, n_clusters):
+    k_means = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
+    final_labels = k_means.fit_predict(df)
+    df['cluster'] = final_labels
+
+    return df
+
+df_c0 = clustering(df_c0, 2)
+df_c1 = clustering(df_c1, 2)
+df_c2 = clustering(df_c2, 19)
+df_c3 = clustering(df_c3, 19)
