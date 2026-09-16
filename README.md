@@ -171,7 +171,7 @@ The exact structure may change as the project develops.
 Clone the repository:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/sparshpatil13412/netflix-recommendation-engine
 cd netflix-recommendation-engine
 ```
 
