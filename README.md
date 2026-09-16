@@ -22,6 +22,7 @@ The project focuses on:
 * Cluster evaluation
 * PCA-based visualization
 * Cluster interpretation
+* Recommendation
 
 The current implementation is focused on **content clustering**, rather than personalized recommendations based on individual user history.
 
@@ -65,6 +66,8 @@ K-Means Clustering
 Cluster Evaluation
       ↓
 Visualization & Interpretation
+      ↓
+Recommendation
 ```
 
 ### K-Means
@@ -153,11 +156,7 @@ netflix-recommendation-engine/
 ├── data/
 │   └── netflix_titles.csv
 │
-├── notebooks/
-│   └── ...
-│
-├── models/
-│   └── ...
+├── main.py
 │
 ├── README.md
 └── requirements.txt
@@ -219,7 +218,6 @@ The project is currently focused on understanding and developing the **unsupervi
 
 Possible future directions include:
 
-* Building a recommendation layer on top of the discovered clusters
 * Incorporating user preferences
 * Comparing K-Means with other clustering algorithms
 * Exploring text-based features
