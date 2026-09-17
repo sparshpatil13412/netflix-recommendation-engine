@@ -363,9 +363,17 @@ def clustering(df, n_clusters):
     final_labels = k_means.fit_predict(df)
     df['cluster'] = final_labels
 
-    return df
+    return df, k_means
 
-df_c0 = clustering(df_c0, 2)
-df_c1 = clustering(df_c1, 2)
-df_c2 = clustering(df_c2, 19)
-df_c3 = clustering(df_c3, 19)
+df_c0, kmeans_c0 = clustering(df_c0, 2)
+df_c1, kmeans_c1 = clustering(df_c1, 2)
+df_c2, kmeans_c2= clustering(df_c2, 19)
+df_c3, kmeans_c3 = clustering(df_c3, 19)
+
+#adding the sub-clusters to the original DataFrame
+df.loc[df_c0.index, 'sub_cluster'] = df_c0['cluster']
+df.loc[df_c1.index, 'sub_cluster'] = df_c1['cluster']
+df.loc[df_c2.index, 'sub_cluster'] = df_c2['cluster']
+df.loc[df_c3.index, 'sub_cluster'] = df_c3['cluster']
+
+print(df.head(2))#checking if the sub-clusters are added
