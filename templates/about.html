@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}
+About · Netflix Recommendation Engine
+{% endblock %}
+
+
+{% block content %}
+
+<section class="about-page">
+
+    <div class="about-hero">
+
+        <p class="hero-label">
+            ABOUT THE PROJECT
+        </p>
+
+        <h1>
+            Recommendations<br>
+            through <span>clustering.</span>
+        </h1>
+
+        <p>
+            This project uses unsupervised machine learning to discover
+            groups of similar movies and TV shows and uses those groups
+            to generate recommendations.
+        </p>
+
+    </div>
+
+
+    <section class="about-content">
+
+
+        <div class="about-block">
+
+            <p class="section-label">
+                01 / DATA
+            </p>
+
+            <h2>
+                Netflix Titles
+            </h2>
+
+            <p>
+                The model is trained on a Netflix titles dataset containing
+                information such as content type, genres, maturity rating,
+                release year, and duration.
+            </p>
+
+        </div>
+
+
+        <div class="about-block">
+
+            <p class="section-label">
+                02 / MACHINE LEARNING
+            </p>
+
+            <h2>
+                K-Means Clustering
+            </h2>
+
+            <p>
+                K-Means groups titles according to their encoded features.
+                The project first creates four main clusters and then
+                performs additional clustering inside those groups to
+                discover more specific segments.
+            </p>
+
+        </div>
+
+
+        <div class="about-block">
+
+            <p class="section-label">
+                03 / RECOMMENDATION
+            </p>
+
+            <h2>
+                How It Works
+            </h2>
+
+
+            <div class="process">
+
+                <div class="process-step">
+
+                    <span>01</span>
+
+                    <p>
+                        Enter information about a recently watched title.
+                    </p>
+
+                </div>
+
+
+                <div class="process-step">
+
+                    <span>02</span>
+
+                    <p>
+                        The input is transformed using the same preprocessing
+                        used during model training.
+                    </p>
+
+                </div>
+
+
+                <div class="process-step">
+
+                    <span>03</span>
+
+                    <p>
+                        K-Means determines the main cluster and its
+                        corresponding sub-cluster.
+                    </p>
+
+                </div>
+
+
+                <div class="process-step">
+
+                    <span>04</span>
+
+                    <p>
+                        Titles belonging to the matching cluster are returned
+                        as recommendations.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="about-block">
+
+            <p class="section-label">
+                04 / TECHNOLOGY
+            </p>
+
+            <div class="technology-list">
+
+                <span>Python</span>
+                <span>Pandas</span>
+                <span>NumPy</span>
+                <span>Scikit-learn</span>
+                <span>K-Means</span>
+                <span>Flask</span>
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+</section>
+
+{% endblock %}

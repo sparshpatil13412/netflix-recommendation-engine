@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block title %}
+Netflix Recommendation Engine
+{% endblock %}
+
+{% block content %}
+<section class="recommendation-page">
+    <div class="hero">
+        <div class="hero-label">
+            MACHINE LEARNING · K-MEANS
+        </div>
+        <h1>
+            Find your next<br>
+            <span>favorite.</span>
+        </h1>
+        <p>
+            Enter the details of something you've recently watched.
+            The recommendation engine will find titles from similar
+            clusters in the Netflix dataset.
+        </p>
+    </div>
+
+    <div class="recommendation-container">
+        <form action="/recommend" method="POST" class="recommendation-form">
+            <div class="form-header">
+                <p class="section-label">
+                    01 / WATCHED TITLE
+                </p>
+                <h2>
+                    Tell us what you watched
+                </h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label for="title">
+                        Title
+                    </label>
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        placeholder="e.g. Interstellar"
+                        required
+                    >
+                </div>
+                <div class="form-group">
+                    <label for="title_type">
+                        Type
+                    </label>
+                    <select
+                        id="title_type"
+                        name="title_type"
+                        required
+                    >
+                        <option value="" disabled selected>
+                            Select type
+                        </option>
+                        <option value="Movie">
+                            Movie
+                        </option>
+                        <option value="TV Show">
+                            TV Show
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="rating">
+                        Rating
+                    </label>
+                    <input
+                        type="text"
+                        id="rating"
+                        name="rating"
+                        placeholder="e.g. PG-13"
+                        required
+                    >
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="genres">
+                        Genres
+                        <span>
+                            Separate multiple genres with commas
+                        </span>
+                    </label>
+                    <input
+                        type="text"
+                        id="genres"
+                        name="genres"
+                        placeholder="e.g. Dramas, International Movies, Sci-Fi & Fantasy"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="release_year">
+                        Release Year
+                    </label>
+                    <input
+                        type="number"
+                        id="release_year"
+                        name="release_year"
+                        placeholder="e.g. 2014"
+                        min="1900"
+                        max="2026"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="duration">
+                        <span id="duration-label">
+                            Duration
+                        </span>
+                        <span id="duration-unit">
+                            Select type first
+                        </span>
+                    </label>
+                    <input
+                        type="number"
+                        id="duration"
+                        name="duration"
+                        placeholder="Select type first"
+                        min="1"
+                        required
+                        disabled
+                    >
+                </div>
+            </div>
+            <button
+                type="submit"
+                class="recommend-button"
+            >
+                <span>
+                    Find Recommendations
+                </span>
+                <span class="button-arrow">
+                    →
+                </span>
+            </button>
+        </form>
+
+        {% if recommendations %}
+        <section class="results-section">
+            <div class="results-header">
+                <div>
+                    <p class="section-label">
+                        02 / RESULTS
+                    </p>
+                    <h2>
+                        Recommended for you
+                    </h2>
+                </div>
+                <span class="result-count">
+                    {{ recommendations|length }} titles
+                </span>
+            </div>
+
+            <div class="recommendation-grid">
+                {% for movie in recommendations %}
+                <article class="movie-card">
+                    <div class="movie-number">
+                        {{ "%02d"|format(loop.index) }}
+                    </div>
+                    <div class="movie-info">
+                        <h3>
+                            {{ movie.title }}
+                        </h3>
+                        <div class="movie-meta">
+                            <span>
+                                {{ movie.type }}
+                            </span>
+                            <span>
+                                {{ movie.release_year }}
+                            </span>
+                            <span>
+                                {{ movie.rating }}
+                            </span>
+                        </div>
+                        <p class="movie-genres">
+                            {{ movie.listed_in }}
+                        </p>
+                    </div>
+                    <div class="card-arrow">
+                        ↗
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        {% if error %}
+        <div class="error-message">
+            <span>!</span>
+            {{ error }}
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<script>
+    const typeSelect = document.getElementById("title_type");
+    const durationInput = document.getElementById("duration");
+    const durationLabel = document.getElementById("duration-label");
+    const durationUnit = document.getElementById("duration-unit");
+
+    typeSelect.addEventListener("change", function () {
+        durationInput.disabled = false;
+
+        if (this.value === "Movie") {
+            durationLabel.textContent = "Duration";
+            durationUnit.textContent = "minutes";
+            durationInput.placeholder = "e.g. 169";
+        } else if (this.value === "TV Show") {
+            durationLabel.textContent = "Number of seasons";
+            durationUnit.textContent = "seasons";
+            durationInput.placeholder = "e.g. 3";
+        }
+        durationInput.value = "";
+    });
+
+</script>
+{% endblock %}

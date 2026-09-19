@@ -1,7 +1,19 @@
-from main import std_scaler, one_hot_encoder, multi_label_binarizer, kmeans_final, kmeans_c0, kmeans_c1, kmeans_c2, kmeans_c3, df
+import joblib
 from datetime import datetime
 import pandas as pd
 import numpy as np
+
+##LOADING SAVED VARIABLES AND MODELS
+df = pd.read_csv("data//new_df.csv")
+
+std_scaler = joblib.load('models/std_scaler.pkl')
+one_hot_encoder = joblib.load('models/one_hot_encoder.pkl')
+multi_label_binarizer = joblib.load('models/multi_label_binarizer.pkl')
+kmeans_final = joblib.load('models/kmeans_final.pkl')
+kmeans_c0 = joblib.load('models/kmeans_c0.pkl')
+kmeans_c1 = joblib.load('models/kmeans_c1.pkl')
+kmeans_c2 = joblib.load('models/kmeans_c2.pkl')
+kmeans_c3 = joblib.load('models/kmeans_c3.pkl')
 
 ##RECOMMENDATION TO USER
 def recommend(title, title_type, genres, rating, release_year, duration):
@@ -74,7 +86,7 @@ def recommend(title, title_type, genres, rating, release_year, duration):
         ]
     recommend_titles = recommend_titles.sample(10)
 
-    print(f"Because you watched {title}:\n{recommend_titles}")
+    return recommend_titles
 
 if __name__ == '__main__':
     title = input("Enter the title:")
@@ -87,4 +99,5 @@ if __name__ == '__main__':
     else:
         duration = input("Enter the no. of seasons of the title(only the no.):")
 
-    recommend(title, title_type, genres, rating, release_year, duration)
+    recommended_titles = recommend(title, title_type, genres, rating, release_year, duration)
+    print(f"Because u watched {title}:\n{recommended_titles['title']}")

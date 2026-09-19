@@ -24,12 +24,14 @@ from sklearn.preprocessing import MultiLabelBinarizer
 from datetime import datetime
 import plotly.express as px
 import plotly.graph_objects as go
+import joblib
 
 ##LOADING THE DATASET
 csv_path = 'data//netflix_titles.csv'
 df =  pd.read_csv(csv_path)
 
-print(df.head(2)) #checking if the dataset has been loaded properly and correctly
+if __name__ == "__main__":
+    print(df.head(2)) #checking if the dataset has been loaded properly and correctly
 
 ##REMOVING UNNECESSARY COLUMNS
 df.drop(['show_id','date_added', 'cast', 'description', 'country', 'director'],axis=1,inplace=True) # Removing columns not required for genre-based K-Means clustering
@@ -49,14 +51,17 @@ df = df.drop(['duration'],axis=1) #dropping the duration column as it has been d
 
 
 ##DATA CLEANING
-print("Info about the dataset:")
-df.info()#info about the dataset
+if __name__ == "__main__":
+    print("Info about the dataset:")
+    df.info()#info about the dataset
 
-print("Null values in each column:\n",df.isnull().sum())#checking for null values
+if __name__ == "__main__":
+    print("Null values in each column:\n",df.isnull().sum())#checking for null values
 
 df['movie_duration'] = df['movie_duration'].fillna(df['movie_duration'].median()) #filling null values in movie_duration with the median value
 df['rating'] = df['rating'].fillna(df['rating'].mode()[0]) #filling null values in rating with the mode value
-print("Null values in each column after filling:\n",df.isnull().sum())#checking for null values after filling
+if __name__ == "__main__":
+    print("Null values in each column after filling:\n",df.isnull().sum())#checking for null values after filling
 
 ## SCALING THE DATA
 """
@@ -88,7 +93,8 @@ scaled_features = std_scaler.fit_transform(
 features = np.hstack((scaled_features, one_hot_encoded, genre_encoded))
 
 scaled_df = pd.DataFrame(features)
-print("Final DataFrame:", scaled_df.head(2)) #checking the final dataframe after scaling and encoding
+if __name__ == "__main__":
+    print("Final DataFrame:", scaled_df.head(2)) #checking the final dataframe after scaling and encoding
 
 ##K-MEANS CLUSTERING
 """
@@ -108,22 +114,25 @@ for n_clusters in range_n_clusters:
     silhouette = silhouette_score(scaled_df, kmeans.labels_)
     davies_bouldin = davies_bouldin_score(scaled_df, kmeans.labels_)
     calinski_harabasz = calinski_harabasz_score(scaled_df, kmeans.labels_)
-    print(f"For n_clusters = {n_clusters}, the silhouette score is {silhouette}")
-    print(f"For n_clusters = {n_clusters}, the Davies-Bouldin score is {davies_bouldin}")
-    print(f"For n_clusters = {n_clusters}, the Calinski-Harabasz score is {calinski_harabasz}\n\n")
+    if __name__ == "__main__":
+        print(f"For n_clusters = {n_clusters}, the silhouette score is {silhouette}")
+        print(f"For n_clusters = {n_clusters}, the Davies-Bouldin score is {davies_bouldin}")
+        print(f"For n_clusters = {n_clusters}, the Calinski-Harabasz score is {calinski_harabasz}\n\n")
     results.append([n_clusters, silhouette, davies_bouldin, calinski_harabasz])
 
 #checking the results dataframe to see if the silhouette score is winning in only terms of the mathematical differnece
 results_df = pd.DataFrame(results, columns=['n_clusters', 'silhouette_score', 'davies_bouldin_score', 'calinski_harabasz_score'])
-print("Results DataFrame:\n", results_df.sort_values('silhouette_score', ascending=False).head(10))#finding the top 10 silhouette scores to find the optimal number of clusters
+if __name__ == "__main__":
+    print("Results DataFrame:\n", results_df.sort_values('silhouette_score', ascending=False).head(10))#finding the top 10 silhouette scores to find the optimal number of clusters
 
 #plotting the elbow method graph to find the optimal number of clusters
-plt.figure(figsize=(14, 7))
-plt.plot(range_n_clusters, elbow_scores, marker='o')
-plt.title('Elbow Method For Optimal k')
-plt.xlabel('Number of clusters')
-plt.ylabel('Inertia')
-plt.show()
+if __name__ == "__main__":
+    plt.figure(figsize=(14, 7))
+    plt.plot(range_n_clusters, elbow_scores, marker='o')
+    plt.title('Elbow Method For Optimal k')
+    plt.xlabel('Number of clusters')
+    plt.ylabel('Inertia')
+    plt.show()
 
 """
 After analyzing the silhouette score, Davies-Bouldin score, Calinski-Harabasz score, and the elbow the method it was concluded that the optimal number of clusters for the project was one of the following: 2, 4, or 10.
@@ -181,9 +190,10 @@ def plot_cluster_genres(df, k):
     plt.tight_layout(h_pad=2)
     plt.show()
 
-plot_cluster_genres(df, 2)
-plot_cluster_genres(df, 4)
-plot_cluster_genres(df, 10)
+if __name__ == "__main__":
+    plot_cluster_genres(df, 2)
+    plot_cluster_genres(df, 4)
+    plot_cluster_genres(df, 10)
 
 pca = PCA(n_components=3, random_state=42)#using PCA to reduce dimesionality to 3 for visualization purposes
 X_pca = pca.fit_transform(scaled_df)
@@ -246,9 +256,10 @@ def plot_clusters(k):
 
     fig.show()
 
-plot_clusters(2)
-plot_clusters(4)
-plot_clusters(10)
+if __name__ == "__main__":
+    plot_clusters(2)
+    plot_clusters(4)
+    plot_clusters(10)
 
 """
 After the methods were applied it was concluded:
@@ -264,9 +275,10 @@ kmeans_final = KMeans(n_clusters=4, random_state=42, n_init=10)
 final_labels = kmeans_final.fit_predict(scaled_df)
 df['cluster'] = final_labels
 scaled_df['cluster'] = final_labels
-print("Final KMeans model created with n_clusters = 4")
-print("Final dataframe after clustering:", df.head(10))
-print("Final dataframe with cluster names:\n", df['cluster'].head(10))
+if __name__ == "__main__":
+    print("Final KMeans model created with n_clusters = 4")
+    print("Final dataframe after clustering:", df.head(10))
+    print("Final dataframe with cluster names:\n", df['cluster'].head(10))
 
 ##USING K-MEANS TO DIFFERENTIATE THE FOUR CLUSTERS INTO SUB-CLUSTERS FOR FINER DETAILING
 """
@@ -274,19 +286,23 @@ Making dataframes of the four clusters got from K-Means.
 The following four clusters will be separated into sub-clusters for finer detailing and better recommendations.
 """
 df_c0 = scaled_df[scaled_df['cluster']==0]#creating dataframe with titles in cluster 0
-print("Titles in cluster 1:",df_c0.head(2))
+if __name__ == "__main__":
+    print("Titles in cluster 1:",df_c0.head(2))
 df_c0 = df_c0.drop(columns=['cluster'])
 
 df_c1 = scaled_df[scaled_df['cluster']==1]#creating dataframe with titles in cluster 1
-print("Titles in cluster 2:",df_c1.head(2))
+if __name__ == "__main__":
+    print("Titles in cluster 2:",df_c1.head(2))
 df_c1 = df_c1.drop(columns=['cluster'])
 
 df_c2 = scaled_df[scaled_df['cluster']==2]#creating dataframe with titles in cluster 2
-print("Titles in cluster 3:",df_c2.head(2))
+if __name__ == "__main__":
+    print("Titles in cluster 3:",df_c2.head(2))
 df_c2 = df_c2.drop(columns=['cluster'])
 
 df_c3 = scaled_df[scaled_df['cluster']==3]#creating dataframe with titles in cluster 3
-print("Titles in cluster 4:",df_c3.head(2))
+if __name__ == "__main__":
+    print("Titles in cluster 4:",df_c3.head(2))
 df_c3 = df_c3.drop(columns=['cluster'])
 
 """
@@ -313,24 +329,28 @@ def optimum_clusters(df, df_name):
         silhouette = silhouette_score(df, kmeans.labels_)
         davies_bouldin = davies_bouldin_score(df, kmeans.labels_)
         calinski_harabasz = calinski_harabasz_score(df, kmeans.labels_)
-        print(f"For n_clusters = {n_clusters} in {df_name}, the silhouette score is {silhouette}")
-        print(f"For n_clusters = {n_clusters} in {df_name}, the Davies-Bouldin score is {davies_bouldin}")
-        print(f"For n_clusters = {n_clusters} in {df_name}, the Calinski-Harabasz score is {calinski_harabasz}\n\n")
+        if __name__ == "__main__":
+            print(f"For n_clusters = {n_clusters} in {df_name}, the silhouette score is {silhouette}")
+            print(f"For n_clusters = {n_clusters} in {df_name}, the Davies-Bouldin score is {davies_bouldin}")
+            print(f"For n_clusters = {n_clusters} in {df_name}, the Calinski-Harabasz score is {calinski_harabasz}\n\n")
         results.append([n_clusters, silhouette, davies_bouldin, calinski_harabasz])
 
     #checking the results dataframe to see if the silhouette score is winning in only terms of the mathematical differnece
     results_df = pd.DataFrame(results, columns=['n_clusters', 'silhouette_score', 'davies_bouldin_score', 'calinski_harabasz_score'])
-    print(f"Results DataFrame of {df_name}:\n", results_df.sort_values('silhouette_score', ascending=False).head(5))#finding the top 5 silhouette scores to find the optimal number of clusters
+    if __name__ == "__main__":
+        print(f"Results DataFrame of {df_name}:\n", results_df.sort_values('silhouette_score', ascending=False).head(5))#finding the top 5 silhouette scores to find the optimal number of clusters
     elbow_scores_df = pd.DataFrame(elbow_scores, columns=['n_clusters', 'inertia'])
-    print(f"Interias of the the sub-clusters of the cluster {df_name}:\n", elbow_scores_df.head(20))
+    if __name__ == "__main__":
+        print(f"Interias of the the sub-clusters of the cluster {df_name}:\n", elbow_scores_df.head(20))
 
     #plotting the elbow method graph to find the optimal number of clusters
-    plt.figure(figsize=(14, 7))
-    plt.plot(elbow_scores_df['n_clusters'], elbow_scores_df['inertia'], marker='o')
-    plt.title('Elbow Method For Optimal k')
-    plt.xlabel('Number of clusters')
-    plt.ylabel('Inertia')
-    plt.show()
+    if __name__ == "__main__":
+        plt.figure(figsize=(14, 7))
+        plt.plot(elbow_scores_df['n_clusters'], elbow_scores_df['inertia'], marker='o')
+        plt.title('Elbow Method For Optimal k')
+        plt.xlabel('Number of clusters')
+        plt.ylabel('Inertia')
+        plt.show()
 
     return results_df, elbow_scores_df
 
@@ -377,4 +397,18 @@ df.loc[df_c1.index, 'sub_cluster'] = df_c1['cluster']
 df.loc[df_c2.index, 'sub_cluster'] = df_c2['cluster']
 df.loc[df_c3.index, 'sub_cluster'] = df_c3['cluster']
 
-print(df.head(2))#checking if the sub-clusters are added
+if __name__ == "__main__":
+    print(df.head(2))#checking if the sub-clusters are added
+
+##SAVING THE VARIABLES NEEDED FOR RECOMMENDATION USING JOBLIB
+joblib.dump(std_scaler, "models/std_scaler.pkl")
+joblib.dump(one_hot_encoder, "models/one_hot_encoder.pkl")
+joblib.dump(multi_label_binarizer, "models/multi_label_binarizer.pkl")
+
+joblib.dump(kmeans_final, "models/kmeans_final.pkl")
+joblib.dump(kmeans_c0, "models/kmeans_c0.pkl")
+joblib.dump(kmeans_c1, "models/kmeans_c1.pkl")
+joblib.dump(kmeans_c2, "models/kmeans_c2.pkl")
+joblib.dump(kmeans_c3, "models/kmeans_c3.pkl")
+
+df.to_csv("data/new_df.csv", index=False)#saving this as it contains cluster and sub-cluster

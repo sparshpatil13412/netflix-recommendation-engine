@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}Netflix Recommendation Engine{% endblock %}
+    </title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="nav-container">
+
+            <a href="/" class="brand">
+                <span class="brand-mark">N</span>
+                <span>Recommendation Engine</span>
+            </a>
+
+            <nav>
+                <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">
+                    Recommend
+                </a>
+
+                <a href="/about" class="nav-link {% if request.path == '/about' %}active{% endif %}">
+                    About
+                </a>
+            </nav>
+
+        </div>
+    </header>
+
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+
+    <footer>
+        <div class="footer-container">
+            <span>NETFLIX RECOMMENDATION ENGINE</span>
+            <span>POWERED BY MACHINE LEARNING</span>
+        </div>
+    </footer>
+
+</body>
+
+</html>
