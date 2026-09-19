@@ -22,7 +22,7 @@ Netflix Recommendation Engine
     </div>
 
     <div class="recommendation-container">
-        <form action="/recommend" method="POST" class="recommendation-form">
+        <form action="/" method="POST" class="recommendation-form">
             <div class="form-header">
                 <p class="section-label">
                     01 / WATCHED TITLE
@@ -197,6 +197,15 @@ Netflix Recommendation Engine
             <span>!</span>
             {{ error }}
         </div>
+        {% endif %}
+        {% if submitted %}
+        <script>
+            window.addEventListener("load", function () {
+                document.querySelector(".results-section")?.scrollIntoView({
+                    behavior: "smooth"
+                });
+            });
+        </script>
         {% endif %}
     </div>
 </section>
